@@ -12,7 +12,16 @@ void init_game(GameState* state) {
   state->key_walk_right_pressed  = 0;
   state->key_space_pressed       = 0;
 
-  // rn just 
+  // locate Initial Ronnie Coordinates (IRC)
+  state->ronnie.x = 100;
+  state->ronnie.y = 100;
+
+  // create initial Ronnie Chamber
+  state->chambers[0] = malloc(sizeof(Chamber));
+  state->chambers[0]->x = 0;
+  state->chambers[0]->y = 0;
+  state->chambers[0]->heightInTiles = 5;
+  state->chambers[0]->widthInTiles = 5;
 
   // Initialize ball in bottom center
   state->ball.x = (float) (0.5 * SCREEN_WIDTH);  // middle of screen

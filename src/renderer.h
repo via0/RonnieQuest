@@ -21,5 +21,6 @@ void render_game(Renderer* renderer, GameState* state);
 void cleanup_renderer(Renderer* renderer);
 
 void render_tile(Renderer* renderer, Tile* tile);
+void render_chamber(Renderer* renderer, Chamber* chamber, Ronnie* ronnie);
 
 #endif

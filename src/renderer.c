@@ -34,8 +34,11 @@ void render_game(Renderer* renderer, GameState* state) {
   SDL_SetRenderDrawColor(renderer->renderer, 0x18, 0x18, 0x18, 0xFF);
   SDL_RenderClear(renderer->renderer);
 
-  Tile tile = {0, 0};
-  render_tile(renderer, &tile);
+  Chamber chamber_to_render;
+  for(int i = 0; i < MAX_CHAMBERS_ON_SCREEN; i++){
+    if(state->chambers[i])
+      render_chamber(renderer, state->chambers[i], &state->ronnie);
+  }
 
 #if 0
   // Draw bowling alley (just a rectangle for now)
@@ -171,6 +174,23 @@ void render_tile(Renderer* renderer, Tile* tile){
   SDL_SetRenderDrawColor(renderer->renderer, 0x32, 0xa8, 0x52, 0xff);
   SDL_Rect tile_rect = {tile->x, tile->y, TILE_SIDE_LENGTH, TILE_SIDE_LENGTH};
   SDL_RenderFillRect(renderer->renderer, &tile_rect);
+}
+
+void render_chamber(Renderer* renderer, Chamber* chamber, Ronnie* ronnie){
+  // initialize tile with coordinates in the world
+  Tile tile_to_render = {chamber->x, chamber->y};
+
+  tile_to_render.x -= (ronnie->x - (SCREEN_WIDTH / 2));
+  tile_to_render.y -= (ronnie->y - (SCREEN_HEIGHT / 2));
+
+  for(uint8_t i_row = 0; i_row < chamber->heightInTiles; i_row++){
+    for(uint8_t i_col = 0; i_col < chamber->widthInTiles; i_col++){
+      render_tile(renderer, &tile_to_render);
+      tile_to_render.x += TILE_SIDE_LENGTH;
+    }
+    tile_to_render.x -= (chamber->widthInTiles * TILE_SIDE_LENGTH);
+    tile_to_render.y += TILE_SIDE_LENGTH;
+  }
 }
 
 void cleanup_renderer(Renderer* renderer) {

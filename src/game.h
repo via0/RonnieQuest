@@ -23,20 +23,26 @@
 #define EPSILON_N -0.0001f // floating point negative 0
 
 #define TILE_SIDE_LENGTH 32 // each tile is 32x32 pixels
+#define MAX_CHAMBERS_ON_SCREEN 10 // way overkill baby cmon now
 
 typedef struct {
   // upper left corner of tile
-  uint16_t x;
-  uint16_t y;
+  int16_t x;
+  int16_t y;
 } Tile;
 
 typedef struct {
   uint8_t widthInTiles;
   uint8_t heightInTiles;
   // upper left corner of chamber (location of first tile)
-  uint16_t x;
-  uint16_t y;
+  int16_t x;
+  int16_t y;
 } Chamber;
+
+typedef struct {
+  int16_t x;
+  int16_t y;
+} Ronnie;
 
 typedef struct {
   int ori_x;
@@ -77,6 +83,11 @@ typedef struct {
   Wall walls[MAX_WALLS];
   Ball ball;
   Pin  pins[NUM_PINS];
+
+  Chamber* chambers[MAX_CHAMBERS_ON_SCREEN];
+  uint8_t numValidChambers; // how many chambers exist rn (right now)
+
+  Ronnie ronnie;
 } GameState;
 
 void init_game(GameState* state);
