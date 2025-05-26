@@ -13,7 +13,7 @@ void init_game(GameState* state) {
   state->key_space_pressed       = 0;
 
   // locate Initial Ronnie Coordinates (IRC)
-  state->ronnie.x = 100;
+  state->ronnie.x = 50;
   state->ronnie.y = 100;
 
   // create initial Ronnie Chamber
@@ -114,6 +114,29 @@ void update_game(GameState* state, float delta_time) {
       state->pins[i].angle_rad = ball_getPinCollisionAngle(&state->ball, &state->pins[i]);
     }
   }
+
+  ronnie_update(state); // update ronnie position based on user input
+}
+
+void ronnie_update(GameState* state){
+  if(!ball_isMoving(state)){
+    if(state->key_space_pressed){ // launch ball based on current angle
+      ball_updateVelocity(&state->ball);
+    } else {
+      if(state->key_walk_left_pressed)   state->ball.x -= 5;
+      if(state->key_walk_right_pressed)  state->ball.x += 5;
+      if(state->key_angle_left_pressed)  state->ball.angle_rad += (M_PI * 0.05f);
+      if(state->key_angle_right_pressed) state->ball.angle_rad -= (M_PI * 0.05f);
+    }
+  } else {
+    state->ball.x += state->ball.velocity_x;
+    state->ball.y += state->ball.velocity_y;
+  }
+
+  if(state->key_walk_left_pressed)  state->ronnie.x -= 5;
+  if(state->key_walk_right_pressed) state->ronnie.x += 5;
+  if(state->key_walk_up_pressed)    state->ronnie.y -= 5;
+  if(state->key_walk_down_pressed)  state->ronnie.y += 5;
 }
 
 // TODO: this function is doing too much, updating ball based on velocity
@@ -179,6 +202,12 @@ void handle_input(GameState* state, SDL_Event* event) {
       case SDLK_d:
         state->key_walk_right_pressed = 1;
         break;
+      case SDLK_w:
+        state->key_walk_up_pressed = 1;
+        break;
+      case SDLK_s:
+        state->key_walk_down_pressed = 1;
+        break;
     }
   }
 
@@ -198,6 +227,12 @@ void handle_input(GameState* state, SDL_Event* event) {
         break;
       case SDLK_d:
         state->key_walk_right_pressed = 0;
+        break;
+      case SDLK_w:
+        state->key_walk_up_pressed = 0;
+        break;
+      case SDLK_s:
+        state->key_walk_down_pressed = 0;
         break;
     }
   }
@@ -261,4 +296,11 @@ float ball_getPinCollisionAngle(Ball* ball, Pin* pin) {
     angle_rad += M_PI;
 
   return angle_rad;
+}
+
+void cleanup_game(GameState* state){
+  for(int i = 0; i < MAX_CHAMBERS_ON_SCREEN; i++){
+    if(state->chambers[i])
+      free(state->chambers[i]);
+  }
 }

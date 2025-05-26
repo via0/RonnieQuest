@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
     
     // Cleanup
     cleanup_renderer(&renderer);
+    cleanup_game(&game_state); // destroy all dynamically allocated variables
 #ifdef DEBUG
     cleanup_debug();
 #endif

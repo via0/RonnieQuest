@@ -74,11 +74,13 @@ typedef struct {
 } Pin;
 
 typedef struct {
-  Uint8 key_space_pressed;
-  Uint8 key_angle_left_pressed;
-  Uint8 key_angle_right_pressed;
-  Uint8 key_walk_left_pressed;
-  Uint8 key_walk_right_pressed;
+  uint8_t key_space_pressed;
+  uint8_t key_angle_left_pressed;
+  uint8_t key_angle_right_pressed;
+  uint8_t key_walk_left_pressed;
+  uint8_t key_walk_right_pressed;
+  uint8_t key_walk_up_pressed;
+  uint8_t key_walk_down_pressed;
 
   Wall walls[MAX_WALLS];
   Ball ball;
@@ -101,5 +103,9 @@ bool ball_isMoving(GameState* state);
 bool ball_isCollidingWithWall(GameState* state, Wall* wall);
 bool ball_isCollidingWithPin(Ball* ball, Pin* pin);
 float ball_getPinCollisionAngle(Ball* ball, Pin* pin);
+
+void ronnie_update(GameState* state);
+
+void cleanup_game(GameState* state);
 
 #endif
