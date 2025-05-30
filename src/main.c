@@ -15,15 +15,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-#ifdef DEBUG
-    if (!init_debug()) {
-      // init debug failed, handle error
-      cleanup_renderer(&renderer);
-      SDL_Quit();
-      return 1;
-    }
-#endif
-    
     if (!init_renderer(&renderer)) {
         SDL_Quit();
         return 1;
@@ -66,9 +57,6 @@ int main(int argc, char* argv[]) {
     // Cleanup
     cleanup_renderer(&renderer);
     cleanup_game(&game_state); // destroy all dynamically allocated variables
-#ifdef DEBUG
-    cleanup_debug();
-#endif
     SDL_Quit();
     
     return 0;

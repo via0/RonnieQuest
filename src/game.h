@@ -25,10 +25,25 @@
 #define TILE_SIDE_LENGTH 32 // each tile is 32x32 pixels
 #define MAX_CHAMBERS_ON_SCREEN 10 // way overkill baby cmon now
 
+typedef enum {
+  DOOR_NONE,
+  DOOR_NORTH,
+  DOOR_SOUTH,
+  DOOR_EAST,
+  DOOR_WEST
+} DoorType;
+
+typedef enum {
+  CHAMBER_HALLWAY_HORIZONTAL,
+  CHAMBER_HALLWAY_VERTICAL,
+  CHAMBER_ROOM
+} ChamberType;
+
 typedef struct {
   // upper left corner of tile
   int16_t x;
   int16_t y;
+  DoorType doorType;
 } Tile;
 
 typedef struct {
@@ -37,6 +52,10 @@ typedef struct {
   // upper left corner of chamber (location of first tile)
   int16_t x;
   int16_t y;
+  ChamberType chamberType;
+
+  // array of tiles (dynamically allocated)
+  Tile* tiles;
 } Chamber;
 
 typedef struct {
@@ -103,6 +122,9 @@ bool ball_isMoving(GameState* state);
 bool ball_isCollidingWithWall(GameState* state, Wall* wall);
 bool ball_isCollidingWithPin(Ball* ball, Pin* pin);
 float ball_getPinCollisionAngle(Ball* ball, Pin* pin);
+
+Chamber* chamber_create(int16_t x, int16_t y, uint8_t sideLength, ChamberType chamberType);
+void chamber_delete(Chamber* chamber); // deallocate chamber memory
 
 void ronnie_update(GameState* state);
 

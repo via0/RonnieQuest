@@ -20,8 +20,12 @@ void init_game(GameState* state) {
   state->chambers[0] = malloc(sizeof(Chamber));
   state->chambers[0]->x = 0;
   state->chambers[0]->y = 0;
-  state->chambers[0]->heightInTiles = 5;
-  state->chambers[0]->widthInTiles = 5;
+  state->chambers[0]->heightInTiles = 1;
+  state->chambers[0]->widthInTiles = 1;
+  state->chambers[0]->chamberType = CHAMBER_ROOM;
+  state->chambers[0]->tiles = malloc(sizeof(Tile));
+
+//  state->chambers[0] = chamber_create(0, 0, 5, CHAMBER_ROOM);
 
   // Initialize ball in bottom center
   state->ball.x = (float) (0.5 * SCREEN_WIDTH);  // middle of screen
@@ -116,6 +120,40 @@ void update_game(GameState* state, float delta_time) {
   }
 
   ronnie_update(state); // update ronnie position based on user input
+}
+
+// Create new chamber, allocating the new memory (how exciting)
+Chamber* chamber_create(int16_t x, int16_t y, uint8_t sideLength, ChamberType chamberType){
+  Chamber* chamber;
+
+  chamber->x = x;
+  chamber->y = y;
+
+  chamber->chamberType = chamberType;
+
+  if(chamberType == CHAMBER_HALLWAY_HORIZONTAL || chamberType == CHAMBER_ROOM)
+    chamber->widthInTiles = sideLength;
+  else
+    chamber->widthInTiles = 1;
+
+  if(chamberType == CHAMBER_HALLWAY_VERTICAL || chamberType == CHAMBER_ROOM)
+    chamber->heightInTiles = sideLength;
+  else
+    chamber->heightInTiles = 1;
+
+  chamber->tiles = (Tile*) malloc(sizeof(Tile) * chamber->widthInTiles * chamber->heightInTiles);
+
+  for(int i_row = 0; i_row < chamber->heightInTiles; i_row++){
+    for(int i_col = 0; i_col < chamber->widthInTiles; i_col++){
+      chamber->tiles[(i_row * chamber->widthInTiles) + i_col].doorType = DOOR_NONE;
+    }
+  }
+
+  return chamber;
+}
+
+void chamber_delete(Chamber* chamber){
+  free(chamber->tiles);
 }
 
 void ronnie_update(GameState* state){

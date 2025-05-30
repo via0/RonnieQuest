@@ -2,6 +2,7 @@
 #include "game.h"
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
+#include <stdint.h>
 
 int init_renderer(Renderer* renderer) {
   renderer->screen_width = SCREEN_WIDTH;
@@ -39,6 +40,8 @@ void render_game(Renderer* renderer, GameState* state) {
     if(state->chambers[i])
       render_chamber(renderer, state->chambers[i], &state->ronnie);
   }
+
+  render_ronnie(renderer, &state->ronnie);
 
 #if 0
   // Draw bowling alley (just a rectangle for now)
@@ -170,26 +173,45 @@ void render_dead_pin(Renderer* renderer, Pin* pin) {
   );
 }
 
-void render_tile(Renderer* renderer, Tile* tile){
+
+void render_ronnie(Renderer* renderer, Ronnie* ronnie) {
+  // Draw ball
+  SDL_SetRenderDrawColor(renderer->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  Uint8 ronnie_radius = 8;
+  for (int w = 0; w < ronnie_radius * 2; w++) {
+    for (int h = 0; h < ronnie_radius * 2; h++) {
+      int dx = ronnie_radius - w;
+      int dy = ronnie_radius - h;
+      if ((dx*dx + dy*dy) <= (ronnie_radius * ronnie_radius)) {
+        SDL_RenderDrawPoint(renderer->renderer, 
+            (SCREEN_WIDTH / 2) + w - ronnie_radius, 
+            (SCREEN_HEIGHT / 2) + h - ronnie_radius);
+      }
+    }
+  }
+}
+
+void render_tile(Renderer* renderer, Tile* tile, int16_t x, int16_t y){
   SDL_SetRenderDrawColor(renderer->renderer, 0x32, 0xa8, 0x52, 0xff);
-  SDL_Rect tile_rect = {tile->x, tile->y, TILE_SIDE_LENGTH, TILE_SIDE_LENGTH};
+  SDL_Rect tile_rect = {x, y, TILE_SIDE_LENGTH, TILE_SIDE_LENGTH};
   SDL_RenderFillRect(renderer->renderer, &tile_rect);
 }
 
 void render_chamber(Renderer* renderer, Chamber* chamber, Ronnie* ronnie){
   // initialize tile with coordinates in the world
-  Tile tile_to_render = {chamber->x, chamber->y};
+  Tile tile_to_render = {chamber->x, chamber->y, DOOR_NONE};
 
-  tile_to_render.x -= (ronnie->x - (SCREEN_WIDTH / 2));
-  tile_to_render.y -= (ronnie->y - (SCREEN_HEIGHT / 2));
+  int16_t x = chamber->x - (ronnie->x - (SCREEN_WIDTH / 2));
+  int16_t y = chamber->y - (ronnie->y - (SCREEN_HEIGHT / 2));
 
   for(uint8_t i_row = 0; i_row < chamber->heightInTiles; i_row++){
     for(uint8_t i_col = 0; i_col < chamber->widthInTiles; i_col++){
-      render_tile(renderer, &tile_to_render);
-      tile_to_render.x += TILE_SIDE_LENGTH;
+      tile_to_render = chamber->tiles[(i_row * chamber->widthInTiles) + i_col];
+      render_tile(renderer, &tile_to_render, x, y);
+      x += TILE_SIDE_LENGTH;
     }
-    tile_to_render.x -= (chamber->widthInTiles * TILE_SIDE_LENGTH);
-    tile_to_render.y += TILE_SIDE_LENGTH;
+    x -= (chamber->widthInTiles * TILE_SIDE_LENGTH);
+    y += TILE_SIDE_LENGTH;
   }
 }
 

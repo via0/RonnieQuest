@@ -22,3 +22,14 @@ add_executable(ronnie
 
 # Link SDL2
 target_link_libraries(ronnie ${SDL2_LIBRARIES} SDL2_ttf m)
+
+# Add debug-specific configurations for GDB
+set(CMAKE_BUILD_TYPE Debug)
+
+# Add compiler flags for debugging
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -DDEBUG")
+
+# preprocessor fun
+add_compile_definitions(
+  $<$<CONFIG:Debug>:DEBUG>
+)
