@@ -17,15 +17,15 @@ void init_game(GameState* state) {
   state->ronnie.y = 100;
 
   // create initial Ronnie Chamber
-  state->chambers[0] = malloc(sizeof(Chamber));
-  state->chambers[0]->x = 0;
-  state->chambers[0]->y = 0;
-  state->chambers[0]->heightInTiles = 1;
-  state->chambers[0]->widthInTiles = 1;
-  state->chambers[0]->chamberType = CHAMBER_ROOM;
-  state->chambers[0]->tiles = malloc(sizeof(Tile));
+//  state->chambers[0] = malloc(sizeof(Chamber));
+//  state->chambers[0]->x = 0;
+//  state->chambers[0]->y = 0;
+//  state->chambers[0]->heightInTiles = 1;
+//  state->chambers[0]->widthInTiles = 1;
+//  state->chambers[0]->chamberType = CHAMBER_ROOM;
+//  state->chambers[0]->tiles = malloc(sizeof(Tile));
 
-//  state->chambers[0] = chamber_create(0, 0, 5, CHAMBER_ROOM);
+  state->chambers[0] = chamber_create(0, 0, 5, CHAMBER_ROOM);
 
   // Initialize ball in bottom center
   state->ball.x = (float) (0.5 * SCREEN_WIDTH);  // middle of screen
@@ -124,7 +124,7 @@ void update_game(GameState* state, float delta_time) {
 
 // Create new chamber, allocating the new memory (how exciting)
 Chamber* chamber_create(int16_t x, int16_t y, uint8_t sideLength, ChamberType chamberType){
-  Chamber* chamber;
+  Chamber* chamber = malloc(sizeof(Chamber));
 
   chamber->x = x;
   chamber->y = y;
