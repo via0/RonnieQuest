@@ -177,7 +177,7 @@ void render_dead_pin(Renderer* renderer, Pin* pin) {
 void render_ronnie(Renderer* renderer, Ronnie* ronnie) {
   // Draw ball
   SDL_SetRenderDrawColor(renderer->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  Uint8 ronnie_radius = 8;
+  Uint8 ronnie_radius = RONNIE_RADIUS;
   for (int w = 0; w < ronnie_radius * 2; w++) {
     for (int h = 0; h < ronnie_radius * 2; h++) {
       int dx = ronnie_radius - w;
@@ -192,7 +192,10 @@ void render_ronnie(Renderer* renderer, Ronnie* ronnie) {
 }
 
 void render_tile(Renderer* renderer, Tile* tile, int16_t x, int16_t y){
-  SDL_SetRenderDrawColor(renderer->renderer, 0x32, 0xa8, 0x52, 0xff);
+  if(tile->doorType == DOOR_NONE)
+    SDL_SetRenderDrawColor(renderer->renderer, 0x32, 0xa8, 0x52, 0xff);
+  else
+    SDL_SetRenderDrawColor(renderer->renderer, 0x32, 0xa8, 0x52, 0x00);
   SDL_Rect tile_rect = {x, y, TILE_SIDE_LENGTH, TILE_SIDE_LENGTH};
   SDL_RenderFillRect(renderer->renderer, &tile_rect);
 }

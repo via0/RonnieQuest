@@ -26,6 +26,7 @@ void init_game(GameState* state) {
 //  state->chambers[0]->tiles = malloc(sizeof(Tile));
 
   state->chambers[0] = chamber_create(0, 0, 5, CHAMBER_ROOM);
+  state->currentChamber = state->chambers[0];
 
   // Initialize ball in bottom center
   state->ball.x = (float) (0.5 * SCREEN_WIDTH);  // middle of screen
@@ -156,27 +157,67 @@ void chamber_delete(Chamber* chamber){
   free(chamber->tiles);
 }
 
-void ronnie_update(GameState* state){
-  if(!ball_isMoving(state)){
-    if(state->key_space_pressed){ // launch ball based on current angle
-      ball_updateVelocity(&state->ball);
-    } else {
-      if(state->key_walk_left_pressed)   state->ball.x -= 5;
-      if(state->key_walk_right_pressed)  state->ball.x += 5;
-      if(state->key_angle_left_pressed)  state->ball.angle_rad += (M_PI * 0.05f);
-      if(state->key_angle_right_pressed) state->ball.angle_rad -= (M_PI * 0.05f);
-    }
-  } else {
-    state->ball.x += state->ball.velocity_x;
-    state->ball.y += state->ball.velocity_y;
+uint8_t chamber_getEdgeTileIndex(Chamber* chamber){
+  uint8_t resultIndex;
+/*
+  // for rooms, randomly select a border tile that isn't already a door
+  if(chamber->chamberType == CHAMBER_ROOM){
+    // border tiles are in the union
+    // {{0, width-1}, width, 2*width-1, 2*width, 3*width-1, {(height-1)*width, (width * height) - 1}
+    // enumerate walls
+    // -----0------
+    // |          |
+    // 3          1
+    // |          |
+    // -----2------
+    uint8_t whichWall;
+    uint8_t whichPartOfWall;
+    do{
+    // Only select from middle portion of walls (no corner tiles)
+    if(whichWall == 0 || whichWall == 2)
+      whichPartOfWall = rand() % (chamber->widthInTiles - 2) + 1;
+    else
+      whichPartOfWall = rand() % (chamber->heightInTiles - 2) + 1;
+    while(chamber->isTileIndexADoor
   }
+  // for hallways, select the opposite end of the hallway (the one that isn't already a door)
+*/
+  return 0;
+}
 
+bool chamber_isTileIndexADoor(Chamber* chamber, uint8_t index){
+  return (chamber->tiles[index].doorType != DOOR_NONE);
+}
+
+void ronnie_update(GameState* state){
   if(state->key_walk_left_pressed)  state->ronnie.x -= 5;
   if(state->key_walk_right_pressed) state->ronnie.x += 5;
   if(state->key_walk_up_pressed)    state->ronnie.y -= 5;
   if(state->key_walk_down_pressed)  state->ronnie.y += 5;
+
+  if(ronnie_isCollidingWithWestWall(state))  state->ronnie.x += 5;
+  if(ronnie_isCollidingWithEastWall(state))  state->ronnie.x -= 5;
+  if(ronnie_isCollidingWithNorthWall(state)) state->ronnie.y += 5;
+  if(ronnie_isCollidingWithSouthWall(state)) state->ronnie.y -= 5;
+
 }
 
+// return true if leftmost point of ronnie is further left than left wall of chamber
+bool ronnie_isCollidingWithWestWall(GameState* state){
+  return ((state->ronnie.x - RONNIE_RADIUS) < (state->currentChamber->x));
+}
+
+bool ronnie_isCollidingWithEastWall(GameState* state){
+  return false;
+}
+
+bool ronnie_isCollidingWithNorthWall(GameState* state){
+  return false;
+}
+
+bool ronnie_isCollidingWithSouthWall(GameState* state){
+  return false;
+}
 // TODO: this function is doing too much, updating ball based on velocity
 // should be diffeent from updating ball based on walking and both should
 // be different from updating ball velocity itself

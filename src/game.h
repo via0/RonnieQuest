@@ -25,6 +25,8 @@
 #define TILE_SIDE_LENGTH 32 // each tile is 32x32 pixels
 #define MAX_CHAMBERS_ON_SCREEN 10 // way overkill baby cmon now
 
+#define RONNIE_RADIUS 8
+
 typedef enum {
   DOOR_NONE,
   DOOR_NORTH,
@@ -59,6 +61,7 @@ typedef struct {
 } Chamber;
 
 typedef struct {
+  // center of ronnie
   int16_t x;
   int16_t y;
 } Ronnie;
@@ -106,6 +109,7 @@ typedef struct {
   Pin  pins[NUM_PINS];
 
   Chamber* chambers[MAX_CHAMBERS_ON_SCREEN];
+  Chamber* currentChamber;
   uint8_t numValidChambers; // how many chambers exist rn (right now)
 
   Ronnie ronnie;
@@ -125,8 +129,13 @@ float ball_getPinCollisionAngle(Ball* ball, Pin* pin);
 
 Chamber* chamber_create(int16_t x, int16_t y, uint8_t sideLength, ChamberType chamberType);
 void chamber_delete(Chamber* chamber); // deallocate chamber memory
+uint8_t chamber_getEdgeTileIndex(Chamber* chamber); // pick a tile index for generating a door
 
 void ronnie_update(GameState* state);
+bool ronnie_isCollidingWithNorthWall(GameState* state);
+bool ronnie_isCollidingWithSouthWall(GameState* state);
+bool ronnie_isCollidingWithEastWall(GameState* state);
+bool ronnie_isCollidingWithWestWall(GameState* state);
 
 void cleanup_game(GameState* state);
 
