@@ -102,24 +102,6 @@ void init_pins(GameState* state){
 }
 
 void update_game(GameState* state, float delta_time) {
-  // This is where you'll put your physics code!
-  ball_update(state); // update ball position based on current velocity and user input
-  for (Uint8 i = 0; i < MAX_WALLS; i++){
-    if(state->walls[i].defined && ball_isCollidingWithWall(state, &state->walls[i])) {
-      // TODO: angle of incidence, angle of reflection calculation
-      printf("Ball is colliding w wall %d", i);
-      state->ball.angle_rad = (2.0f * state->walls[i].angle_rad) - state->ball.angle_rad;
-      ball_updateVelocity(&state->ball);
-    }
-  }
-
-  for (Uint8 i = 0; i < NUM_PINS; i++){
-    if(state->pins[i].defined && state->pins[i].alive && ball_isCollidingWithPin(&state->ball, &state->pins[i])) {
-      state->pins[i].alive = 0;
-      state->pins[i].angle_rad = ball_getPinCollisionAngle(&state->ball, &state->pins[i]);
-    }
-  }
-
   ronnie_update(state); // update ronnie position based on user input
 }
 
@@ -224,7 +206,7 @@ bool ronnie_isCollidingWithSouthWall(GameState* state){
         (state->currentChamber->y + (state->currentChamber->heightInTiles * TILE_SIDE_LENGTH)));
 }
 // TODO: this function is doing too much, updating ball based on velocity
-// should be diffeent from updating ball based on walking and both should
+// should be different from updating ball based on walking and both should
 // be different from updating ball velocity itself
 void ball_update(GameState* state){
   if(!ball_isMoving(state)){
