@@ -207,16 +207,21 @@ bool ronnie_isCollidingWithWestWall(GameState* state){
   return ((state->ronnie.x - RONNIE_RADIUS) < (state->currentChamber->x));
 }
 
+// return true if rightmost point of ronnie is further right than right wall of chamber
 bool ronnie_isCollidingWithEastWall(GameState* state){
-  return false;
+  return ((state->ronnie.x + RONNIE_RADIUS) >
+      (state->currentChamber->x + (state->currentChamber->widthInTiles * TILE_SIDE_LENGTH)));
 }
 
+// return true if uppermost part of ronnie is further up than top wall of chamber
 bool ronnie_isCollidingWithNorthWall(GameState* state){
-  return false;
+  return ((state->ronnie.y - RONNIE_RADIUS) < (state->currentChamber->y));
 }
 
+// return true if downmost part of ronnie is further down than bottom wall of chamber
 bool ronnie_isCollidingWithSouthWall(GameState* state){
-  return false;
+  return ((state->ronnie.y + RONNIE_RADIUS) >
+        (state->currentChamber->y + (state->currentChamber->heightInTiles * TILE_SIDE_LENGTH)));
 }
 // TODO: this function is doing too much, updating ball based on velocity
 // should be diffeent from updating ball based on walking and both should
